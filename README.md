@@ -31,12 +31,11 @@ To get a local copy up and running follow these simple steps.
 
 1. Clone the repo:
    ```sh
-   git clone https://github.com/exclusiveabhi/react-job-portal.git
+   git clone https://github.com/Shub17-code/Job-Portal.git
    ```
 2. Install NPM packages:
 
    ```sh
-   cd react-job-portal
    cd backend
    npm install
    cd..
@@ -47,7 +46,6 @@ To get a local copy up and running follow these simple steps.
 3. ## If you don't want to change the`.env` credentials skip step 4 and move to step 5.
 
 4. Set up environment variables:
-
    - Create a `config.env` file after creating a `config folder` in the backend directory, containing the following variables:
 
    ```env
@@ -90,6 +88,4 @@ Contributions are what make the open-source community such an amazing place to l
 
 ## Contact
 
-Abhishek Rajput - [GitHub](https://github.com/exclusiveabhi)
-
-Project Link: [https://github.com/exclusiveabhi/react-job-portal.git](https://github.com/exclusiveabhi/react-job-portal.git)
+Shubham Choudhary - [GitHub](https://github.com/Shub17-code)
