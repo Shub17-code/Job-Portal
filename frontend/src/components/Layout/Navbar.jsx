@@ -33,6 +33,9 @@ const Navbar = () => {
         <div className="logo">
           <img src="/careerconnect-white.png" alt="logo" />
         </div>
+        <p className="navRoleTag">
+          {user && user.role ? `${user.role} Portal` : "Career Portal"}
+        </p>
         <ul className={!show ? "menu" : "show-menu menu"}>
           <li>
             <Link to={"/"} onClick={() => setShow(false)}>

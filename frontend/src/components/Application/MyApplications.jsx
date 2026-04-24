@@ -2,47 +2,70 @@ import React, { useContext, useEffect, useState } from "react";
 import { Context } from "../../main";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import ResumeModal from "./ResumeModal";
 
 const MyApplications = () => {
   const { user } = useContext(Context);
   const [applications, setApplications] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
   const [resumeImageUrl, setResumeImageUrl] = useState("");
 
   const { isAuthorized } = useContext(Context);
-  const navigateTo = useNavigate();
+  const getDemoApplications = () =>
+    JSON.parse(localStorage.getItem("demoApplications") || "[]");
 
   useEffect(() => {
-    try {
-      if (user && user.role === "Employer") {
-        axios
-          .get("http://localhost:4000/api/v1/application/employer/getall", {
-            withCredentials: true,
-          })
-          .then((res) => {
-            setApplications(res.data.applications);
-          });
-      } else {
-        axios
-          .get("http://localhost:4000/api/v1/application/jobseeker/getall", {
-            withCredentials: true,
-          })
-          .then((res) => {
-            setApplications(res.data.applications);
-          });
+    const fetchApplications = async () => {
+      try {
+        const demoApplications = getDemoApplications();
+        if (user && user.role === "Employer") {
+          const res = await axios.get(
+            "http://localhost:4000/api/v1/application/employer/getall",
+            {
+              withCredentials: true,
+            }
+          );
+          setApplications(res.data.applications || []);
+        } else {
+          const res = await axios.get(
+            "http://localhost:4000/api/v1/application/jobseeker/getall",
+            {
+              withCredentials: true,
+            }
+          );
+          setApplications([...(res.data.applications || []), ...demoApplications]);
+        }
+      } catch (error) {
+        const demoApplications = getDemoApplications();
+        if (user && user.role !== "Employer") {
+          setApplications(demoApplications);
+        }
+        toast.error(error.response?.data?.message || "Failed to fetch data");
+      } finally {
+        setLoading(false);
       }
-    } catch (error) {
-      toast.error(error.response.data.message);
-    }
+    };
+    fetchApplications();
   }, [isAuthorized]);
 
   if (!isAuthorized) {
-    navigateTo("/");
+    return <Navigate to="/" />;
   }
 
   const deleteApplication = (id) => {
+    if (id.startsWith("demo-app-")) {
+      const nextApplications = applications.filter(
+        (application) => application._id !== id
+      );
+      const demoOnly = nextApplications.filter((item) => item.isDemoApplication);
+      localStorage.setItem("demoApplications", JSON.stringify(demoOnly));
+      setApplications(nextApplications);
+      toast.success("Demo application deleted");
+      return;
+    }
+
     try {
       axios
         .delete(`http://localhost:4000/api/v1/application/delete/${id}`, {
@@ -72,15 +95,11 @@ const MyApplications = () => {
     <section className="my_applications page">
       {user && user.role === "Job Seeker" ? (
         <div className="container">
-          <center>
           <h1>My Applications</h1>
-          </center>
-          {applications.length <= 0 ? (
-            <>
-              {" "}
-              <center>
-              <h4>No Applications Found</h4></center>{" "}
-            </>
+          {loading ? (
+            <div className="applicationsState">Loading applications...</div>
+          ) : applications.length <= 0 ? (
+            <div className="applicationsState">No applications found.</div>
           ) : (
             applications.map((element) => {
               return (
@@ -96,15 +115,11 @@ const MyApplications = () => {
         </div>
       ) : (
         <div className="container">
-          <center>
           <h1>Applications From Job Seekers</h1>
-          </center>
-          {applications.length <= 0 ? (
-            <>
-            <center>
-              <h4>No Applications Found</h4>
-              </center>
-            </>
+          {loading ? (
+            <div className="applicationsState">Loading applications...</div>
+          ) : applications.length <= 0 ? (
+            <div className="applicationsState">No applications found.</div>
           ) : (
             applications.map((element) => {
               return (
@@ -132,6 +147,11 @@ const JobSeekerCard = ({ element, deleteApplication, openModal }) => {
     <>
       <div className="job_seeker_card">
         <div className="detail">
+          {element.jobTitle && (
+            <p>
+              <span>Job Title:</span> {element.jobTitle}
+            </p>
+          )}
           <p>
             <span>Name:</span> {element.name}
           </p>
@@ -149,15 +169,19 @@ const JobSeekerCard = ({ element, deleteApplication, openModal }) => {
           </p>
         </div>
         <div className="resume">
-          <img
-            src={element.resume.url}
-            alt="resume"
-            onClick={() => openModal(element.resume.url)}
-          />
+          {element.resume?.url ? (
+            <img
+              src={element.resume.url}
+              alt="resume"
+              onClick={() => openModal(element.resume.url)}
+            />
+          ) : (
+            <div className="resumePlaceholder">Resume attached in demo mode</div>
+          )}
         </div>
         <div className="btn_area">
           <button onClick={() => deleteApplication(element._id)}>
-            Delete Application
+            Delete
           </button>
         </div>
       </div>

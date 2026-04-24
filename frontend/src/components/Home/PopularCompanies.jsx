@@ -1,6 +1,7 @@
 import React from "react";
 import { FaMicrosoft, FaApple } from "react-icons/fa";
 import { SiTesla } from "react-icons/si";
+import { Link } from "react-router-dom";
 
 const PopularCompanies = () => {
   const companies = [
@@ -9,6 +10,7 @@ const PopularCompanies = () => {
       title: "Microsoft",
       location: "Millennium City Centre, Gurugram",
       openPositions: 10,
+      hiringType: "Hybrid",
       icon: <FaMicrosoft />,
     },
     {
@@ -16,6 +18,7 @@ const PopularCompanies = () => {
       title: "Tesla",
       location: "Millennium City Centre, Gurugram",
       openPositions: 5,
+      hiringType: "Onsite",
       icon: <SiTesla />,
     },
     {
@@ -23,6 +26,7 @@ const PopularCompanies = () => {
       title: "Apple",
       location: "Millennium City Centre, Gurugram",
       openPositions: 20,
+      hiringType: "Remote",
       icon: <FaApple />,
     },
   ];
@@ -39,9 +43,10 @@ const PopularCompanies = () => {
                   <div className="text">
                     <p>{element.title}</p>
                     <p>{element.location}</p>
+                    <span>{element.hiringType}</span>
                   </div>
                 </div>
-                <button>Open Positions {element.openPositions}</button>
+                <Link to="/job/getall">Open Positions {element.openPositions}</Link>
               </div>
             );
           })}

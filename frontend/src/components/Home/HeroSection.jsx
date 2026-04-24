@@ -1,7 +1,11 @@
 import React from "react";
+import { useContext } from "react";
 import { FaBuilding, FaSuitcase, FaUsers, FaUserPlus } from "react-icons/fa";
+import { Link } from "react-router-dom";
+import { Context } from "../../main";
 
 const HeroSection = () => {
+  const { user } = useContext(Context);
   const details = [
     {
       id: 1,
@@ -33,13 +37,21 @@ const HeroSection = () => {
       <div className="heroSection">
         <div className="container">
           <div className="title">
-            <h1>Find a job that suits</h1>
-            <h1>your interests and skills</h1>
+            <span className="heroBadge">Smart matching for jobs and talent</span>
+            <h1>Find opportunities that align with your career goals</h1>
             <p>
-              Discover job opportunities that match your skills and passions.
-              Connect with employers seeking talent like yours for rewarding
-              careers.
+              Discover role-specific opportunities, apply in minutes, and track
+              progress in one streamlined dashboard built for job seekers and
+              employers.
             </p>
+            <div className="heroActions">
+              <Link to="/job/getall">Find Jobs</Link>
+              {user && user.role === "Employer" ? (
+                <Link to="/job/post">Post A Job</Link>
+              ) : (
+                <Link to="/applications/me">My Applications</Link>
+              )}
+            </div>
           </div>
           <div className="image">
             <img src="/heroS.jpg" alt="hero" />

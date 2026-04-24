@@ -16,7 +16,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
 
-  const { isAuthorized, setIsAuthorized, user, setUser } = useContext(Context);
+  const { isAuthorized, setIsAuthorized } = useContext(Context);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -55,8 +55,11 @@ const Register = () => {
           <div className="header">
             <img src="/careerconnect-black.png" alt="logo" />
             <h3>Create a new account</h3>
+            <p className="authSubtext">
+              Join Career Connect to discover jobs or hire top talent faster.
+            </p>
           </div>
-          <form>
+          <form onSubmit={handleRegister}>
             <div className="inputTag">
               <label>Register As</label>
               <div>
@@ -116,7 +119,7 @@ const Register = () => {
                 <RiLock2Fill />
               </div>
             </div>
-            <button type="submit" onClick={handleRegister}>
+            <button type="submit">
               Register
             </button>
             <Link to={"/login"}>Login Now</Link>

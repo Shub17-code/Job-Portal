@@ -1,8 +1,9 @@
 import axios from "axios";
 import React, { useContext, useState } from "react";
 import toast from "react-hot-toast";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { Context } from "../../main";
+import { demoJobs, isDemoJob } from "../../data/demoData";
 
 const Application = () => {
   const [name, setName] = useState("");
@@ -70,6 +71,40 @@ const Application = () => {
     formData.append("resume", resume);
     formData.append("jobId", id);
 
+    if (isDemoJob(id)) {
+      const selectedDemoJob = demoJobs.find((item) => item._id === id);
+      const savedDemoApplications = JSON.parse(
+        localStorage.getItem("demoApplications") || "[]"
+      );
+      const nextDemoApplication = {
+        _id: `demo-app-${Date.now()}`,
+        name,
+        email,
+        phone,
+        address,
+        coverLetter,
+        resume: {
+          url: "",
+        },
+        jobTitle: selectedDemoJob?.title || "Demo Job",
+        isDemoApplication: true,
+      };
+      localStorage.setItem(
+        "demoApplications",
+        JSON.stringify([nextDemoApplication, ...savedDemoApplications])
+      );
+      setName("");
+      setEmail("");
+      setCoverLetter("");
+      setPhone("");
+      setAddress("");
+      setResume(null);
+      toast.success("Demo application submitted successfully!");
+      navigateTo("/applications/me");
+      setLoading(false);
+      return;
+    }
+
     try {
       const { data } = await axios.post(
         "http://localhost:4000/api/v1/application/post",
@@ -104,13 +139,17 @@ const Application = () => {
   };
 
   if (!isAuthorized || (user && user.role === "Employer")) {
-    navigateTo("/");
+    return <Navigate to="/" />;
   }
 
   return (
     <section className="application">
       <div className="container">
         <h3>Application Form</h3>
+        <p className="applicationSubtitle">
+          Fill in your details carefully. Recruiters will use this information
+          to evaluate your profile.
+        </p>
         <form onSubmit={handleApplication}>
           <input
             type="text"
@@ -147,33 +186,22 @@ const Application = () => {
             required
           />
           <div>
-            <label
-              style={{ textAlign: "start", display: "block", fontSize: "20px" }}
-            >
-              Upload Resume 
-              <p style={{ color: "red", fontSize: "12px", margin: "5px 0 0 0" }}>
-                (Supported formats: PNG, JPEG, WEBP. Max size: 2MB)
-              </p>
+            <label className="resumeLabel">
+              Upload Resume
+              <p>(Supported formats: PNG, JPEG, WEBP. Max size: 2MB)</p>
             </label>
             <input
+              className="resumeInput"
               type="file"
               accept=".png,.jpg,.jpeg,.webp"
               onChange={handleFileChange}
-              style={{ width: "100%" }}
             />
-            {fileError && (
-              <p style={{ color: "red", fontSize: "14px", marginTop: "5px" }}>
-                {fileError}
-              </p>
-            )}
+            {fileError && <p className="resumeError">{fileError}</p>}
           </div>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             disabled={loading}
-            style={{ 
-              opacity: loading ? 0.7 : 1,
-              cursor: loading ? "not-allowed" : "pointer" 
-            }}
+            className={loading ? "isLoading" : ""}
           >
             {loading ? "Submitting..." : "Send Application"}
           </button>
