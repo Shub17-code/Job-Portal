@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { Context } from "../../main";
 
 const Login = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
@@ -18,14 +19,14 @@ const Login = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/user/login",
+        `${API_URL}/api/v1/user/login`,
         { email, password, role },
         {
           headers: {
             "Content-Type": "application/json",
           },
           withCredentials: true,
-        }
+        },
       );
       toast.success(data.message);
       setEmail("");
@@ -37,8 +38,8 @@ const Login = () => {
     }
   };
 
-  if(isAuthorized){
-    return <Navigate to={'/'}/>
+  if (isAuthorized) {
+    return <Navigate to={"/"} />;
   }
 
   return (
@@ -58,7 +59,7 @@ const Login = () => {
               <div>
                 <select value={role} onChange={(e) => setRole(e.target.value)}>
                   <option value="">Select Role</option>
-                  
+
                   <option value="Job Seeker">Job Seeker</option>
                   <option value="Employer">Employer</option>
                 </select>
@@ -89,9 +90,7 @@ const Login = () => {
                 <RiLock2Fill />
               </div>
             </div>
-            <button type="submit">
-              Login
-            </button>
+            <button type="submit">Login</button>
             <Link to={"/register"}>Register Now</Link>
           </form>
         </div>

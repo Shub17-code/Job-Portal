@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { Context } from "../../main";
 
 const Register = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
@@ -22,14 +23,14 @@ const Register = () => {
     e.preventDefault();
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/user/register",
+        `${API_URL}/api/v1/user/register`,
         { name, phone, email, role, password },
         {
           headers: {
             "Content-Type": "application/json",
           },
           withCredentials: true,
-        }
+        },
       );
       toast.success(data.message);
       setName("");
@@ -43,10 +44,9 @@ const Register = () => {
     }
   };
 
-  if(isAuthorized){
-    return <Navigate to={'/'}/>
+  if (isAuthorized) {
+    return <Navigate to={"/"} />;
   }
-
 
   return (
     <>
@@ -119,9 +119,7 @@ const Register = () => {
                 <RiLock2Fill />
               </div>
             </div>
-            <button type="submit">
-              Register
-            </button>
+            <button type="submit">Register</button>
             <Link to={"/login"}>Login Now</Link>
           </form>
         </div>

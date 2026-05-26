@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { Context } from "../../main";
 import { demoJobs, isDemoJob } from "../../data/demoData";
 const JobDetails = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { id } = useParams();
   const [job, setJob] = useState({});
   const navigateTo = useNavigate();
@@ -23,7 +24,7 @@ const JobDetails = () => {
     }
 
     axios
-      .get(`http://localhost:4000/api/v1/job/${id}`, {
+      .get(`${API_URL}/api/v1/job/${id}`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -43,8 +44,8 @@ const JobDetails = () => {
   const salaryText = job.fixedSalary
     ? `Rs ${job.fixedSalary}`
     : job.salaryFrom && job.salaryTo
-    ? `Rs ${job.salaryFrom} - Rs ${job.salaryTo}`
-    : "Not disclosed";
+      ? `Rs ${job.salaryFrom} - Rs ${job.salaryTo}`
+      : "Not disclosed";
 
   return (
     <section className="jobDetail page">

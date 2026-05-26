@@ -4,6 +4,7 @@ import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import { Context } from "../../main";
 const PostJob = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [category, setCategory] = useState("");
@@ -31,7 +32,7 @@ const PostJob = () => {
     }
     await axios
       .post(
-        "http://localhost:4000/api/v1/job/post",
+        `${API_URL}/api/v1/job/post`,
         fixedSalary.length >= 4
           ? {
               title,
@@ -57,7 +58,7 @@ const PostJob = () => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       )
       .then((res) => {
         toast.success(res.data.message);
@@ -98,7 +99,7 @@ const PostJob = () => {
                   Frontend Web Development
                 </option>
                 <option value="Business Development Executive">
-                Business Development Executive
+                  Business Development Executive
                 </option>
                 <option value="Account & Finance">Account & Finance</option>
                 <option value="Artificial Intelligence">

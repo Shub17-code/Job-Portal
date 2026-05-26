@@ -6,6 +6,7 @@ import { Navigate } from "react-router-dom";
 import ResumeModal from "./ResumeModal";
 
 const MyApplications = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const { user } = useContext(Context);
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,20 +23,23 @@ const MyApplications = () => {
         const demoApplications = getDemoApplications();
         if (user && user.role === "Employer") {
           const res = await axios.get(
-            "http://localhost:4000/api/v1/application/employer/getall",
+            `${API_URL}/api/v1/application/employer/getall`,
             {
               withCredentials: true,
-            }
+            },
           );
           setApplications(res.data.applications || []);
         } else {
           const res = await axios.get(
-            "http://localhost:4000/api/v1/application/jobseeker/getall",
+            `${API_URL}/api/v1/application/jobseeker/getall`,
             {
               withCredentials: true,
-            }
+            },
           );
-          setApplications([...(res.data.applications || []), ...demoApplications]);
+          setApplications([
+            ...(res.data.applications || []),
+            ...demoApplications,
+          ]);
         }
       } catch (error) {
         const demoApplications = getDemoApplications();
@@ -57,9 +61,11 @@ const MyApplications = () => {
   const deleteApplication = (id) => {
     if (id.startsWith("demo-app-")) {
       const nextApplications = applications.filter(
-        (application) => application._id !== id
+        (application) => application._id !== id,
       );
-      const demoOnly = nextApplications.filter((item) => item.isDemoApplication);
+      const demoOnly = nextApplications.filter(
+        (item) => item.isDemoApplication,
+      );
       localStorage.setItem("demoApplications", JSON.stringify(demoOnly));
       setApplications(nextApplications);
       toast.success("Demo application deleted");
@@ -68,13 +74,13 @@ const MyApplications = () => {
 
     try {
       axios
-        .delete(`http://localhost:4000/api/v1/application/delete/${id}`, {
+        .delete(`${API_URL}/api/v1/application/delete/${id}`, {
           withCredentials: true,
         })
         .then((res) => {
           toast.success(res.data.message);
           setApplications((prevApplication) =>
-            prevApplication.filter((application) => application._id !== id)
+            prevApplication.filter((application) => application._id !== id),
           );
         });
     } catch (error) {
@@ -176,13 +182,13 @@ const JobSeekerCard = ({ element, deleteApplication, openModal }) => {
               onClick={() => openModal(element.resume.url)}
             />
           ) : (
-            <div className="resumePlaceholder">Resume attached in demo mode</div>
+            <div className="resumePlaceholder">
+              Resume attached in demo mode
+            </div>
           )}
         </div>
         <div className="btn_area">
-          <button onClick={() => deleteApplication(element._id)}>
-            Delete
-          </button>
+          <button onClick={() => deleteApplication(element._id)}>Delete</button>
         </div>
       </div>
     </>

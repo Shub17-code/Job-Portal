@@ -7,23 +7,21 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { AiOutlineClose } from "react-icons/ai"; // Import the close icon
 
 const Navbar = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [show, setShow] = useState(false);
   const { isAuthorized, setIsAuthorized, user } = useContext(Context);
   const navigateTo = useNavigate();
 
   const handleLogout = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:4000/api/v1/user/logout",
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axios.get(`${API_URL}/api/v1/user/logout`, {
+        withCredentials: true,
+      });
       toast.success(response.data.message);
       setIsAuthorized(false);
       navigateTo("/login");
     } catch (error) {
-      toast.error(error.response.data.message), setIsAuthorized(true);
+      (toast.error(error.response.data.message), setIsAuthorized(true));
     }
   };
 

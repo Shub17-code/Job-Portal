@@ -5,6 +5,7 @@ import { Context } from "../../main";
 import { demoJobs } from "../../data/demoData";
 
 const Jobs = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
   const [jobs, setJobs] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -17,7 +18,7 @@ const Jobs = () => {
   useEffect(() => {
     const fetchJobs = async () => {
       try {
-        const res = await axios.get("http://localhost:4000/api/v1/job/getall", {
+        const res = await axios.get(`${API_URL}/api/v1/job/getall`, {
           withCredentials: true,
         });
         setJobs(res.data);
@@ -70,11 +71,11 @@ const Jobs = () => {
 
   if (sortBy === "title-asc") {
     filteredJobs = [...filteredJobs].sort((a, b) =>
-      (a.title || "").localeCompare(b.title || "")
+      (a.title || "").localeCompare(b.title || ""),
     );
   } else if (sortBy === "title-desc") {
     filteredJobs = [...filteredJobs].sort((a, b) =>
-      (b.title || "").localeCompare(a.title || "")
+      (b.title || "").localeCompare(a.title || ""),
     );
   }
 

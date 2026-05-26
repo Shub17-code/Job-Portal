@@ -18,17 +18,18 @@ const Application = () => {
   const { isAuthorized, user } = useContext(Context);
   const navigateTo = useNavigate();
   const { id } = useParams();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   // Function to handle file input changes with validation
   const handleFileChange = (event) => {
     const file = event.target.files[0];
     setFileError("");
-    
+
     if (!file) {
       setResume(null);
       return;
     }
-    
+
     // Check file type
     const allowedTypes = ["image/png", "image/jpeg", "image/webp"];
     if (!allowedTypes.includes(file.type)) {
@@ -36,31 +37,31 @@ const Application = () => {
       setResume(null);
       return;
     }
-    
+
     // Check file size (limit to 2MB)
     if (file.size > 2 * 1024 * 1024) {
       setFileError("File size should be less than 2MB");
       setResume(null);
       return;
     }
-    
+
     setResume(file);
   };
 
   const handleApplication = async (e) => {
     e.preventDefault();
-    
+
     // Validate form
     if (!name || !email || !phone || !address || !coverLetter) {
       toast.error("Please fill in all fields");
       return;
     }
-    
+
     if (!resume) {
       setFileError("Please upload your resume");
       return;
     }
-    
+
     setLoading(true);
     const formData = new FormData();
     formData.append("name", name);
@@ -74,7 +75,7 @@ const Application = () => {
     if (isDemoJob(id)) {
       const selectedDemoJob = demoJobs.find((item) => item._id === id);
       const savedDemoApplications = JSON.parse(
-        localStorage.getItem("demoApplications") || "[]"
+        localStorage.getItem("demoApplications") || "[]",
       );
       const nextDemoApplication = {
         _id: `demo-app-${Date.now()}`,
@@ -91,7 +92,7 @@ const Application = () => {
       };
       localStorage.setItem(
         "demoApplications",
-        JSON.stringify([nextDemoApplication, ...savedDemoApplications])
+        JSON.stringify([nextDemoApplication, ...savedDemoApplications]),
       );
       setName("");
       setEmail("");
@@ -107,14 +108,14 @@ const Application = () => {
 
     try {
       const { data } = await axios.post(
-        "http://localhost:4000/api/v1/application/post",
+        `${API_URL}/api/v1/application/post`,
         formData,
         {
           withCredentials: true,
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
       setName("");
       setEmail("");
@@ -125,13 +126,19 @@ const Application = () => {
       toast.success(data.message);
       navigateTo("/job/getall");
     } catch (error) {
-      const errorMessage = error.response?.data?.message || 
+      const errorMessage =
+        error.response?.data?.message ||
         "Something went wrong. Please try again later.";
       toast.error(errorMessage);
-      
+
       // Show specific message for Cloudinary errors
-      if (errorMessage.includes("Cloudinary") || errorMessage.includes("api_key")) {
-        toast.error("File upload service is currently unavailable. Please try again later.");
+      if (
+        errorMessage.includes("Cloudinary") ||
+        errorMessage.includes("api_key")
+      ) {
+        toast.error(
+          "File upload service is currently unavailable. Please try again later.",
+        );
       }
     } finally {
       setLoading(false);
