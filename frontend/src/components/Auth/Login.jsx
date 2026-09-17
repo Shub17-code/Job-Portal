@@ -13,7 +13,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
 
-  const { isAuthorized, setIsAuthorized } = useContext(Context);
+  const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -32,6 +32,7 @@ const Login = () => {
       setEmail("");
       setPassword("");
       setRole("");
+      setUser(data.user);
       setIsAuthorized(true);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -47,10 +48,10 @@ const Login = () => {
       <section className="authPage">
         <div className="container">
           <div className="header">
-            <img src="/careerconnect-black.png" alt="logo" />
+            <img src="/careerbridge-black.png" alt="Career Bridge logo" />
             <h3>Login to your account</h3>
             <p className="authSubtext">
-              Continue your hiring or job search journey with Career Connect.
+              Continue your hiring or job search journey with Career Bridge.
             </p>
           </div>
           <form onSubmit={handleLogin}>

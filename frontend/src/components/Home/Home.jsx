@@ -23,7 +23,7 @@ const Home = () => {
           <div className="container">
             <h3>Success Stories</h3>
             <p>
-              Professionals and recruiters trust Career Connect for faster
+              Professionals and recruiters trust Career Bridge for faster
               hiring and better role matching.
             </p>
             <div className="banner">

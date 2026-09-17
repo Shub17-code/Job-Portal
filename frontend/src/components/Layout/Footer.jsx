@@ -8,7 +8,7 @@ function Footer() {
   const { isAuthorized } = useContext(Context);
   return (
     <footer className={isAuthorized ? "footerShow" : "footerHide"}>
-      <div>&copy; Career Connect. All rights reserved.</div>
+      <div>&copy; Career Bridge. All rights reserved.</div>
       <div>
         <a
           href="https://github.com/exclusiveabhi"

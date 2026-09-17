@@ -17,7 +17,7 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
 
-  const { isAuthorized, setIsAuthorized } = useContext(Context);
+  const { isAuthorized, setIsAuthorized, setUser } = useContext(Context);
 
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -38,6 +38,7 @@ const Register = () => {
       setPassword("");
       setPhone("");
       setRole("");
+      setUser(data.user);
       setIsAuthorized(true);
     } catch (error) {
       toast.error(error.response.data.message);
@@ -53,10 +54,10 @@ const Register = () => {
       <section className="authPage">
         <div className="container">
           <div className="header">
-            <img src="/careerconnect-black.png" alt="logo" />
+            <img src="/careerbridge-black.png" alt="Career Bridge logo" />
             <h3>Create a new account</h3>
             <p className="authSubtext">
-              Join Career Connect to discover jobs or hire top talent faster.
+              Join Career Bridge to discover jobs or hire top talent faster.
             </p>
           </div>
           <form onSubmit={handleRegister}>

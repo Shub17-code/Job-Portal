@@ -9,7 +9,7 @@ import { AiOutlineClose } from "react-icons/ai"; // Import the close icon
 const Navbar = () => {
   const API_URL = import.meta.env.VITE_API_URL;
   const [show, setShow] = useState(false);
-  const { isAuthorized, setIsAuthorized, user } = useContext(Context);
+  const { isAuthorized, setIsAuthorized, setUser, user } = useContext(Context);
   const navigateTo = useNavigate();
 
   const handleLogout = async () => {
@@ -18,10 +18,12 @@ const Navbar = () => {
         withCredentials: true,
       });
       toast.success(response.data.message);
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Logout failed");
+    } finally {
+      setUser({});
       setIsAuthorized(false);
       navigateTo("/login");
-    } catch (error) {
-      (toast.error(error.response.data.message), setIsAuthorized(true));
     }
   };
 
@@ -29,7 +31,7 @@ const Navbar = () => {
     <nav className={isAuthorized ? "navbarShow" : "navbarHide"}>
       <div className="container">
         <div className="logo">
-          <img src="/careerconnect-white.png" alt="logo" />
+          <img src="/careerbridge-white.png" alt="Career Bridge logo" />
         </div>
         <p className="navRoleTag">
           {user && user.role ? `${user.role} Portal` : "Career Portal"}

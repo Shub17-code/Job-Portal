@@ -1,7 +1,7 @@
 import { catchAsyncErrors } from "../middlewares/catchAsyncError.js";
 import { User } from "../models/userSchema.js";
 import ErrorHandler from "../middlewares/error.js";
-import { sendToken } from "../utils/jwtToken.js";
+import { cookieOptions, sendToken } from "../utils/jwtToken.js";
 
 export const register = catchAsyncErrors(async (req, res, next) => {
   const { name, email, phone, password, role } = req.body;
@@ -46,10 +46,7 @@ export const login = catchAsyncErrors(async (req, res, next) => {
 export const logout = catchAsyncErrors(async (req, res, next) => {
   res
     .status(201)
-    .cookie("token", "", {
-      httpOnly: true,
-      expires: new Date(Date.now()),
-    })
+    .clearCookie("token", cookieOptions)
     .json({
       success: true,
       message: "Logged Out Successfully !",
